@@ -1,0 +1,5 @@
+/Users/andrewmiller/Dev/C/umbral/CMakeFiles/umbral-internal.dir
+/Users/andrewmiller/Dev/C/umbral/CMakeFiles/umbral.dir
+/Users/andrewmiller/Dev/C/umbral/CMakeFiles/shaders.dir
+/Users/andrewmiller/Dev/C/umbral/CMakeFiles/edit_cache.dir
+/Users/andrewmiller/Dev/C/umbral/CMakeFiles/rebuild_cache.dir

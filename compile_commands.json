@@ -1,0 +1,44 @@
+[
+{
+  "directory": "/Users/andrewmiller/Dev/C/umbral",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -DDEBUG=1 -DENABLE_ASSERT=1 -I/Users/andrewmiller/Dev/C/umbral/src -I/Users/andrewmiller/Dev/C/umbral/source -I/Users/andrewmiller/Dev/C/umbral/include -I/usr/local/include -I/usr/local/include/SDL2 -I/usr/local/lib -g -std=gnu++20 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -o CMakeFiles/umbral-internal.dir/src/core/umb_mem.cpp.o -c /Users/andrewmiller/Dev/C/umbral/src/core/umb_mem.cpp",
+  "file": "/Users/andrewmiller/Dev/C/umbral/src/core/umb_mem.cpp",
+  "output": "CMakeFiles/umbral-internal.dir/src/core/umb_mem.cpp.o"
+},
+{
+  "directory": "/Users/andrewmiller/Dev/C/umbral",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -DDEBUG=1 -DENABLE_ASSERT=1 -I/Users/andrewmiller/Dev/C/umbral/src -I/Users/andrewmiller/Dev/C/umbral/source -I/Users/andrewmiller/Dev/C/umbral/include -I/usr/local/include -I/usr/local/include/SDL2 -I/usr/local/lib -g -std=gnu++20 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -o CMakeFiles/umbral-internal.dir/src/core/internal.cpp.o -c /Users/andrewmiller/Dev/C/umbral/src/core/internal.cpp",
+  "file": "/Users/andrewmiller/Dev/C/umbral/src/core/internal.cpp",
+  "output": "CMakeFiles/umbral-internal.dir/src/core/internal.cpp.o"
+},
+{
+  "directory": "/Users/andrewmiller/Dev/C/umbral",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -DDEBUG=1 -DENABLE_ASSERT=1 -I/Users/andrewmiller/Dev/C/umbral/src -I/Users/andrewmiller/Dev/C/umbral/source -I/Users/andrewmiller/Dev/C/umbral/include -I/usr/local/include -I/usr/local/include/SDL2 -I/usr/local/lib -g -std=gnu++20 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -o CMakeFiles/umbral-internal.dir/src/sys/umb_app.cpp.o -c /Users/andrewmiller/Dev/C/umbral/src/sys/umb_app.cpp",
+  "file": "/Users/andrewmiller/Dev/C/umbral/src/sys/umb_app.cpp",
+  "output": "CMakeFiles/umbral-internal.dir/src/sys/umb_app.cpp.o"
+},
+{
+  "directory": "/Users/andrewmiller/Dev/C/umbral",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -DDEBUG=1 -DENABLE_ASSERT=1 -I/Users/andrewmiller/Dev/C/umbral/src -I/Users/andrewmiller/Dev/C/umbral/source -I/Users/andrewmiller/Dev/C/umbral/include -I/usr/local/include -I/usr/local/include/SDL2 -I/usr/local/lib -g -std=gnu++20 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -o CMakeFiles/umbral-internal.dir/src/sys/umb_file.cpp.o -c /Users/andrewmiller/Dev/C/umbral/src/sys/umb_file.cpp",
+  "file": "/Users/andrewmiller/Dev/C/umbral/src/sys/umb_file.cpp",
+  "output": "CMakeFiles/umbral-internal.dir/src/sys/umb_file.cpp.o"
+},
+{
+  "directory": "/Users/andrewmiller/Dev/C/umbral",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -DDEBUG=1 -DENABLE_ASSERT=1 -I/Users/andrewmiller/Dev/C/umbral/src -I/Users/andrewmiller/Dev/C/umbral/source -I/Users/andrewmiller/Dev/C/umbral/include -I/usr/local/include -I/usr/local/include/SDL2 -I/usr/local/lib -g -std=gnu++20 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -o CMakeFiles/umbral-internal.dir/src/sys/umb_window.cpp.o -c /Users/andrewmiller/Dev/C/umbral/src/sys/umb_window.cpp",
+  "file": "/Users/andrewmiller/Dev/C/umbral/src/sys/umb_window.cpp",
+  "output": "CMakeFiles/umbral-internal.dir/src/sys/umb_window.cpp.o"
+},
+{
+  "directory": "/Users/andrewmiller/Dev/C/umbral",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -DDEBUG=1 -DENABLE_ASSERT=1 -I/Users/andrewmiller/Dev/C/umbral/src -I/Users/andrewmiller/Dev/C/umbral/source -I/Users/andrewmiller/Dev/C/umbral/include -I/usr/local/include -I/usr/local/include/SDL2 -I/usr/local/lib -g -std=gnu++20 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -o CMakeFiles/umbral-internal.dir/src/gfx/umb_vk.cpp.o -c /Users/andrewmiller/Dev/C/umbral/src/gfx/umb_vk.cpp",
+  "file": "/Users/andrewmiller/Dev/C/umbral/src/gfx/umb_vk.cpp",
+  "output": "CMakeFiles/umbral-internal.dir/src/gfx/umb_vk.cpp.o"
+},
+{
+  "directory": "/Users/andrewmiller/Dev/C/umbral",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -DDEBUG=1 -DENABLE_ASSERT=1 -I/Users/andrewmiller/Dev/C/umbral/src -I/usr/local/include -I/Users/andrewmiller/Dev/C/umbral/source -I/Users/andrewmiller/Dev/C/umbral/include -isystem /usr/local/include/SDL2 -isystem /usr/local/lib -g -std=gnu++20 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk -o CMakeFiles/umbral.dir/src/main.cpp.o -c /Users/andrewmiller/Dev/C/umbral/src/main.cpp",
+  "file": "/Users/andrewmiller/Dev/C/umbral/src/main.cpp",
+  "output": "CMakeFiles/umbral.dir/src/main.cpp.o"
+}
+]

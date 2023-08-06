@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libumbral-internal.a "CMakeFiles/umbral-internal.dir/src/core/umb_mem.cpp.o" "CMakeFiles/umbral-internal.dir/src/core/internal.cpp.o" "CMakeFiles/umbral-internal.dir/src/sys/umb_app.cpp.o" "CMakeFiles/umbral-internal.dir/src/sys/umb_file.cpp.o" "CMakeFiles/umbral-internal.dir/src/sys/umb_window.cpp.o" "CMakeFiles/umbral-internal.dir/src/gfx/umb_vk.cpp.o"
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libumbral-internal.a
