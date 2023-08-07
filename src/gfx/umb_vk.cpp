@@ -7,6 +7,7 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
 
+#define VMA_VULKAN_VERSION 1002000
 #define VMA_IMPLEMENTATION
 #include <gfx/vk_mem_alloc.h>
 
@@ -198,22 +199,22 @@ umb_array_VkVertexInputAttributeDescription umbvk_get_vertex_attribute_descripti
       UMB_ARRAY_CREATE(VkVertexInputAttributeDescription, &_vk.arena, 3);
 
   VkVertexInputAttributeDescription pos = {
-      .binding  = 0,
       .location = 0,
+      .binding  = 0,
       .format   = VK_FORMAT_R32G32B32_SFLOAT,
       .offset   = offsetof(umb_vertex, position)};
   UMB_ARRAY_PUSH(attribute_descs, pos);
 
   VkVertexInputAttributeDescription norm = {
-      .binding  = 0,
       .location = 1,
+      .binding  = 0,
       .format   = VK_FORMAT_R32G32B32_SFLOAT,
       .offset   = offsetof(umb_vertex, normal)};
   UMB_ARRAY_PUSH(attribute_descs, norm);
 
   VkVertexInputAttributeDescription col = {
-      .binding  = 0,
       .location = 2,
+      .binding  = 0,
       .format   = VK_FORMAT_R32G32B32_SFLOAT,
       .offset   = offsetof(umb_vertex, color)};
   UMB_ARRAY_PUSH(attribute_descs, col);
@@ -443,8 +444,8 @@ VkRenderPass umbvk_create_render_pass(VkFormat image_format) {
       .srcSubpass    = VK_SUBPASS_EXTERNAL,
       .dstSubpass    = 0,
       .srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+      .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
       .srcAccessMask = 0,
-      .dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
       .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
   };
 
@@ -715,10 +716,11 @@ umbvk_swapchain umbvk_create_swapchain(
 
   vkGetSwapchainImagesKHR(_vk.device, swapchain, &image_count, nullptr);
   umbvk_swapchain new_swapchain {
+      .n_images = image_count,
       .swapchain    = swapchain,
-      .n_images     = image_count,
       .extent       = extent,
       .color_format = surface_format.format,
+
   };
   vkGetSwapchainImagesKHR(_vk.device, swapchain, &image_count, new_swapchain.images);
 
@@ -957,19 +959,19 @@ umbvk_graphics_pipeline umbvk_default_graphics_pipeline_create() {
       .depthClampEnable        = VK_FALSE,
       .rasterizerDiscardEnable = VK_FALSE,
       .polygonMode             = VK_POLYGON_MODE_FILL,
-      .lineWidth               = 1.0f,
-      .cullMode                = VK_CULL_MODE_BACK_BIT,
+      .cullMode = VK_CULL_MODE_BACK_BIT,
       .frontFace               = VK_FRONT_FACE_CLOCKWISE,
       .depthBiasEnable         = VK_FALSE,
       .depthBiasConstantFactor = 0.0f,
       .depthBiasClamp          = 0.0f,
       .depthBiasSlopeFactor    = 0.0f,
+      .lineWidth = 1.0f,
   };
 
   builder.multisampling = {
       .sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+      .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
       .sampleShadingEnable   = VK_FALSE,
-      .rasterizationSamples  = VK_SAMPLE_COUNT_1_BIT,
       .minSampleShading      = 1.0f,
       .pSampleMask           = nullptr,
       .alphaToCoverageEnable = VK_FALSE,
@@ -977,9 +979,9 @@ umbvk_graphics_pipeline umbvk_default_graphics_pipeline_create() {
   };
 
   builder.color_blend_attachment = {
+      .blendEnable = VK_FALSE,
       .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
                         VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
-      .blendEnable = VK_FALSE,
   };
 
   VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
@@ -1101,8 +1103,10 @@ void umbvk_cmd_render_pass_begin(umbvk_cmd_buffer* cmd, u32 image_idx) {
       .sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
       .renderPass        = _vk.gfx_pipeline.compatible_render_pass,
       .framebuffer       = _vk.swapchain.framebuffers[image_idx],
-      .renderArea.offset = {0, 0},
-      .renderArea.extent = _vk.swapchain.extent,
+      .renderArea = {
+        .offset = {0, 0},
+        .extent = _vk.swapchain.extent,
+       },
       .clearValueCount   = 1,
       .pClearValues      = &clear_color,
   };
@@ -1299,11 +1303,12 @@ void umbvk_draw() {
 }
 
 void umbvk_set_allocator() {
-  VmaAllocatorCreateInfo allocator_info = {
-      .physicalDevice = _vk.physical_device,
-      .device         = _vk.device,
-      .instance       = _vk.instance,
-  };
+    VmaAllocatorCreateInfo allocator_info = {
+        .physicalDevice = _vk.physical_device,
+        .device = _vk.device,
+        .instance = _vk.instance,
+    };
+ 
   vmaCreateAllocator(&allocator_info, &_vk.allocator);
 }
 
@@ -1320,7 +1325,7 @@ void umbvk_init(umb_window* window) {
       .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
       .pEngineName        = "[umbral]",
       .engineVersion      = VK_MAKE_VERSION(1, 0, 0),
-      .apiVersion         = VK_API_VERSION_1_0};
+      .apiVersion         = VK_API_VERSION_1_2};
 
   _vk.window                        = window;
   umb_array_str required_extensions = umbvk_get_required_extensions(_vk.window);
@@ -1393,6 +1398,8 @@ void umbvk_shutdown() {
     vkDeviceWaitIdle(_vk.device);
 
     _vk.deletion_queue.flush();
+
+    vmaDestroyAllocator(_vk.allocator);
 
     umbvk_destroy_swapchain(&_vk.swapchain);
     vkDestroySurfaceKHR(_vk.instance, _vk.surface, nullptr);

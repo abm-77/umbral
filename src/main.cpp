@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -29,4 +30,6 @@ int main(void) {
   umb_app_run(&app);
 
   umb_shutdown();
+
+  return 0;
 }
