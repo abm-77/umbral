@@ -6,14 +6,13 @@ layout(location = 2) in vec3 in_col;
 
 layout(location = 0) out vec3 out_col;
 
-vec2 positions[3] = vec2[](
-    vec2(0.0, -0.5),
-    vec2(0.5, 0.5),
-    vec2(-0.5, 0.5)
-);
+layout( push_constant )  uniform constants {
+  vec4 data;
+  mat4 render_matrix;
+} push_constants;
 
 void main() {
-  gl_Position = vec4(in_pos, 1.0);
+  gl_Position = push_constants.render_matrix * vec4(in_pos, 1.0);
   out_col = in_col;
 }
 
