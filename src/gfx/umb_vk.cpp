@@ -1,12 +1,16 @@
 #include <SDL.h>
 #include <SDL_vulkan.h>
 #include <functional>
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
-#include <immintrin.h>
 #include <umbral.h>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_core.h>
+
+#include <chrono>
+
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #define VMA_VULKAN_VERSION 1002000
 #define VMA_IMPLEMENTATION
@@ -63,6 +67,7 @@ struct umbvk_swapchain {
   VkSemaphore    image_available_semaphore[MAX_SWAPCHAIN_IMAGES];
   VkExtent2D     extent;
   VkFormat       color_format;
+  VkFormat depth_format;
 };
 
 typedef u32 umbvk_desc_count[MAX_DESCRIPTOR_SET_LAYOUTS_PER_PIPELINE];
@@ -268,9 +273,9 @@ void umbvk_load_meshes() {
   triangle_mesh.vertices = UMB_ARRAY_CREATE(umb_vertex, &_vk.arena, 3);
 
   // vertex positions
-  triangle_mesh.vertices.data[0].position = {1.f, 1.f, 0.0f};
-  triangle_mesh.vertices.data[1].position = {-1.f, 1.f, 0.0f};
-  triangle_mesh.vertices.data[2].position = {0.f, -1.f, 0.0f};
+  triangle_mesh.vertices.data[0].position = {0.0f, -1.f, 0.0f};
+  triangle_mesh.vertices.data[1].position = {1.0f, 1.0f, 0.0f};
+  triangle_mesh.vertices.data[2].position = {-1.0f, 1.0f, 0.0f};
 
   // vertex colors, all green
   triangle_mesh.vertices.data[0].color = {0.f, 1.f, 0.0f};
@@ -425,7 +430,7 @@ umbvk_find_queue_families(VkSurfaceKHR surface, VkPhysicalDevice phys_device) {
   return indices;
 }
 
-VkRenderPass umbvk_create_render_pass(VkFormat image_format) {
+VkRenderPass umbvk_create_render_pass(VkFormat image_format/*, VkDepthFormat depth_format*/) {
   VkAttachmentDescription color_attachment {
       .format         = image_format,
       .samples        = VK_SAMPLE_COUNT_1_BIT,
@@ -441,20 +446,52 @@ VkRenderPass umbvk_create_render_pass(VkFormat image_format) {
       .attachment = 0,
       .layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
   };
-  VkSubpassDescription subpass {
-      .pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS,
-      .colorAttachmentCount = 1,
-      .pColorAttachments    = &color_attachment_ref,
+
+// 
+  // VkAttachmentDescription depth_attachment = {
+ //    .flags  0,_f
+	// .format = _depthFormat,
+	// .samples = VK_SAMPLE_COUNT_1_BIT,
+	// .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+	// .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+	// .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+	// .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+	// .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+	 // };
+
+  VkAttachmentReference depth_attachment_ref = {
+     .attachment = 1,
+     .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+   };
+
+  VkSubpassDescription subpass{
+    .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+    .colorAttachmentCount = 1,
+    .pColorAttachments = &color_attachment_ref,
+    // .pDepthStencilAttachment = &depth_attachment_ref,
   };
 
-  VkSubpassDependency dependency {
-      .srcSubpass    = VK_SUBPASS_EXTERNAL,
-      .dstSubpass    = 0,
-      .srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-      .dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+  VkSubpassDependency dependency{
+      .srcSubpass = VK_SUBPASS_EXTERNAL,
+      .dstSubpass = 0,
+      .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+      .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
       .srcAccessMask = 0,
       .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
   };
+
+  VkSubpassDependency depth_dependency{
+      .srcSubpass = VK_SUBPASS_EXTERNAL,
+      .dstSubpass = 0,
+      .srcStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+      .dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+      .srcAccessMask = 0,
+      .dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+  };
+
+  //VkSubpassDependency dependencies[2] = { dependency, depth_dependency };
+  //VkAttachmentDescription attachments[2] = { color_attachment, depth_attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+ //};
 
   VkRenderPass           render_pass;
   VkRenderPassCreateInfo render_pass_info {
@@ -967,7 +1004,7 @@ umbvk_graphics_pipeline umbvk_default_graphics_pipeline_create() {
       .rasterizerDiscardEnable = VK_FALSE,
       .polygonMode             = VK_POLYGON_MODE_FILL,
       .cullMode                = VK_CULL_MODE_BACK_BIT,
-      .frontFace               = VK_FRONT_FACE_CLOCKWISE,
+      .frontFace               = VK_FRONT_FACE_COUNTER_CLOCKWISE,
       .depthBiasEnable         = VK_FALSE,
       .depthBiasConstantFactor = 0.0f,
       .depthBiasClamp          = 0.0f,
@@ -992,9 +1029,9 @@ umbvk_graphics_pipeline umbvk_default_graphics_pipeline_create() {
   };
 
   VkPushConstantRange push_constant = {
+      .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
       .offset     = 0,
       .size       = sizeof(umb_push_constants),
-      .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
   };
 
   VkPipelineLayoutCreateInfo pipeline_layout_create_info = {
@@ -1011,10 +1048,6 @@ umbvk_graphics_pipeline umbvk_default_graphics_pipeline_create() {
           nullptr,
           &builder.pipeline_layout),
       "Failed to create pipeline layout.");
-
-  VkAttachmentReference color_attachment_ref {};
-  color_attachment_ref.attachment = 0;
-  color_attachment_ref.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
   umbvk_graphics_pipeline gfx_pipeline = {
       .generic_pipeline =
@@ -1128,7 +1161,7 @@ void umbvk_cmd_render_pass_begin(umbvk_cmd_buffer* cmd, u32 image_idx) {
 
   VkRenderPassBeginInfo render_pass_info = {
       .sType       = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-      .renderPass  = _vk.gfx_pipeline.compatible_render_pass,
+      .renderPass  = cmd->active_gfx_pipeline->compatible_render_pass,
       .framebuffer = _vk.swapchain.framebuffers[image_idx],
       .renderArea =
           {
@@ -1227,8 +1260,7 @@ void umbvk_create_frame_resources() {
   }
 }
 
-// TODO(bryson): remove
-int  i = 0;
+
 void umbvk_draw() {
   umbvk_frame*      frame = &_vk.frames[_vk.frame_id];
   umbvk_cmd_buffer* cmd   = &frame->cmd;
@@ -1252,17 +1284,20 @@ void umbvk_draw() {
     printf("failed to acquire swap chain image!");
     UMB_ASSERT(false);
   }
+  static auto start_time = std::chrono::high_resolution_clock::now();
 
-  glm::vec3 cam_pos = {0.0f, 0.0f, -0.1f};
-  glm::mat4 view    = glm::translate(glm::mat4(1.0f), cam_pos);
-  glm::mat4 proj    = glm::perspective(glm::radians(70.0f), 640.0f / 480.0f, 0.1f, 200.0f);
-  proj[1][1] *= -1;
-  glm::mat4 model =
-      glm::rotate(glm::mat4(1.0f), glm::radians(i * 0.4f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 mesh_mat = proj * view * model;
+  auto current_time = std::chrono::high_resolution_clock::now();
+  float time = std::chrono::duration<float, std::chrono::seconds::period>(current_time - start_time).count();
+
+  glm::mat4 model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+  glm::mat4 view = glm::lookAt(glm::vec3(2.0f), glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+  glm::mat4 proj = glm::perspective(glm::radians(45.0f), 640.0f / 480.0f, 0.1f, 100.0f);
+  proj[1][1] *= -1.0f;
 
   umb_push_constants constants = {
-      .render_matrix = mesh_mat,
+      .render_matrix = proj * view * model,
   };
 
   vkResetFences(_vk.device, 1, &frame->render_fence);
@@ -1344,7 +1379,6 @@ void umbvk_draw() {
   }
 
   _vk.frame_id = (_vk.frame_id + 1) % MAX_FRAMES_IN_FLIGHT;
-  i++;
 }
 
 void umbvk_set_allocator() {
