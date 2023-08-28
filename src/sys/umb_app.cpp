@@ -1,6 +1,6 @@
 #include <SDL2/SDL.h>
 #include <core/umb_common.h>
-#include <umbral.h>
+#include <gfx/umb_gfx.h>
 
 umb_error umb_init(umb_init_info* init_info) {
   umb_error err = UMB_ERROR_OK;
@@ -33,7 +33,7 @@ umb_error umb_app_init(
   app->update_proc   = update_proc;
   app->shutdown_proc = shutdown_proc;
 
-  umbvk_init(&app->window);
+  umb_gfx_init(&app->window);
 
   return UMB_ERROR_OK;
 }
@@ -53,16 +53,16 @@ void umb_app_run(umb_app* app) {
         switch (e.window.event) {
         case SDL_WINDOWEVENT_RESIZED:
         case SDL_WINDOWEVENT_SIZE_CHANGED: {
-          umbvk_framebuffer_resized();
+          umb_gfx_framebuffer_resized();
         } break;
         }
       } break;
-     }
+      }
 
       if (app->update_proc) app->update_proc(app);
     }
 
-    umbvk_draw();
+    umb_gfx_draw_frame();
   }
 
   if (app->shutdown_proc) app->shutdown_proc(app);
@@ -70,6 +70,6 @@ void umb_app_run(umb_app* app) {
 }
 
 void umb_shutdown() {
-  umbvk_shutdown();
+  umb_gfx_shutdown();
   SDL_Quit();
 }

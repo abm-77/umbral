@@ -1,3 +1,5 @@
+#pragma once
+
 #include <core/umb_common.h>
 #include <stdlib.h>
 
@@ -111,12 +113,25 @@ class umb_scope_arena {
   umb_array_##T {                                                               \
     .data = umb_arena_push_array(arena, T, capacity), .len = 0, .cap = capacity \
   }
+
+#define UMB_PTR_ARRAY_DEF(T) \
+  typedef struct {           \
+    T** data;                \
+    u32 len;                 \
+    u32 cap;                 \
+  } umb_ptr_array_##T
+#define UMB_PTR_ARRAY_CREATE(T, arena, capacity)                                 \
+  umb_ptr_array_##T {                                                            \
+    .data = umb_arena_push_array(arena, T*, capacity), .len = 0, .cap = capacity \
+  }
+
 #define UMB_ARRAY_PUSH(arr, val) \
   UMB_ASSERT(arr.len < arr.cap); \
   arr.data[arr.len++] = val;
 
 #define UMB_CONTAINER_DEF(T) \
   UMB_ARRAY_DEF(T);          \
+  UMB_PTR_ARRAY_DEF(T);      \
   UMB_SLICE_DEF(T);
 
 UMB_CONTAINER_DEF(str);
@@ -130,9 +145,9 @@ struct umb_init_info {
 };
 
 struct umb_window {
-  str         title;
-  u32         width;
-  u32         height;
+  str   title;
+  u32   width;
+  u32   height;
   void* raw_handle;
 };
 
@@ -169,12 +184,4 @@ void umb_shutdown();
 
 #pragma region io
 umb_array_byte umb_read_file_binary(umb_arena arena, str filename);
-#pragma endregion
-
-#pragma region graphics
-
-void umbvk_init(umb_window* window);
-void umbvk_framebuffer_resized();
-void umbvk_draw();
-void umbvk_shutdown();
 #pragma endregion
