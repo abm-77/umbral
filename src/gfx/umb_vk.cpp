@@ -1173,6 +1173,12 @@ void umbvk_create_frame_resources() {
 }
 
 void umbvk_cmd_draw_objects(umbvk_cmd_buffer* cmd) {
+    glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(0, 5, 0));
+    glm::vec3 camPos = {0.f,-6.f,-10.f};
+    glm::mat4 view = glm::translate(glm::mat4(1.f), camPos);
+    glm::mat4 projection = glm::perspective(glm::radians(70.f), 1700.f / 900.f, 0.1f, 200.0f);
+    projection[1][1] *= -1;
+
   umb_mesh      last_mesh     = NULL;
   umb_material* last_material = NULL;
   for (i32 i = 0; i < _vk.render_objects.len; ++i) {
@@ -1184,7 +1190,7 @@ void umbvk_cmd_draw_objects(umbvk_cmd_buffer* cmd) {
     }
 
     umb_push_constants constants {
-        .render_matrix = glm::mat4(1),
+        .render_matrix = projection * view * model,
     };
     umbvk_cmd_push_constants(cmd, &constants, VK_SHADER_STAGE_VERTEX_BIT);
 

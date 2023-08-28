@@ -28,19 +28,19 @@ void load_resources() {
   umb_mesh_push_vertex(
       triangle_mesh,
       {
-          .position = {0.0f, -1.f, 0.0f},
+          .position = {1.0f, 1.0f, 0.5f},
           .color    = {0.f, 1.f, 0.0f},
       });
   umb_mesh_push_vertex(
       triangle_mesh,
       {
-          .position = {1.0f, 1.0f, 0.0f},
+          .position = {-1.0f, 1.0f, 0.5f},
           .color    = {0.f, 1.f, 0.0f},
       });
   umb_mesh_push_vertex(
       triangle_mesh,
       {
-          .position = {-1.0f, 1.0f, 0.0f},
+          .position = {0.0f, -1.0f, 0.5f},
           .color    = {0.f, 1.f, 0.0f},
       });
 
