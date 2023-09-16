@@ -42,9 +42,9 @@ extern umb_log_info umbi_log_info;
   if (umbi_log_info.log_proc) {                                                 \
     umbi_log_info.log_proc(level, umbi_log_info.user_data, fmt, ##__VA_ARGS__); \
   }
-#define UMBI_LOG_INFO(fmt, ...)    UMBI_LOG_MSG(UMB_LOG_INFO, fmt, ##__VA_ARGS__)
-#define UMBI_LOG_WARNING(fmt, ...) UMBI_LOG_MSG(UMB_LOG_WARNING, fmt, ##__VA_ARGS__)
-#define UMBI_LOG_ERROR(fmt, ...)   UMBI_LOG_MSG(UMB_LOG_ERROR, fmt, ##__VA_ARGS__)
+#define UMBI_LOG_INFO(fmt, ...)  UMBI_LOG_MSG(UMB_LOG_INFO, fmt, ##__VA_ARGS__)
+#define UMBI_LOG_WARN(fmt, ...)  UMBI_LOG_MSG(UMB_LOG_WARNING, fmt, ##__VA_ARGS__)
+#define UMBI_LOG_ERROR(fmt, ...) UMBI_LOG_MSG(UMB_LOG_ERROR, fmt, ##__VA_ARGS__)
 
 #pragma endregion
 

@@ -1,5 +1,3 @@
-#pragma once
-
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <gfx/umb_gfx.h>
@@ -15,15 +13,16 @@ void log_proc(umb_log_message_type log_type, void* user_data, const char* fmt, .
   va_end(args);
 }
 
-void start(umb_app* app) {
-  UMBI_LOG_INFO("Starting [umbral]...");
-}
-
 static umb_mesh          triangle_mesh;
 static umb_render_object triangle;
 
-void load_resources() {
-  triangle_mesh = umb_gfx_create_mesh(3);
+static umb_mesh          monkey_mesh;
+static umb_render_object monkey;
+
+void start(umb_app* app) {
+  UMBI_LOG_INFO("Starting [umbral]...");
+
+  triangle_mesh = umb_mesh_create(3);
 
   umb_mesh_push_vertex(
       triangle_mesh,
@@ -48,6 +47,13 @@ void load_resources() {
 
   triangle.mesh     = umb_gfx_get_mesh("triangle_mesh");
   triangle.material = umb_gfx_get_material("default");
+
+  umb_mesh monk_mesh = umb_mesh_load_from_obj("res/models/monkey_smooth.obj");
+  umb_gfx_register_mesh("monkey_mesh", monk_mesh);
+
+  monkey.mesh      = umb_gfx_get_mesh("monkey_mesh");
+  monkey.material  = umb_gfx_get_material("default");
+  monkey.transform = glm::translate(glm::mat4(1), glm::vec3(0.0f, 5.0f, 0.0f));
 }
 
 void update(umb_app* app) {
@@ -64,8 +70,8 @@ int main(void) {
   umb_app app;
   umb_app_init(&app, "[umbral]", 640, 480, start, update, shutdown);
 
-  load_resources();
-  umb_gfx_draw_object(&triangle);
+  // umb_gfx_draw_object(&triangle);
+  umb_gfx_draw_object(&monkey);
 
   umb_app_run(&app);
 
